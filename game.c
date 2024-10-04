@@ -3,7 +3,7 @@
 #include "tinygl.h"
 #include "../fonts/font5x7_1.h"
 #include "navswitch.h"
-#include "usart1.h"
+#include "ir_uart.h"
 
 #define PACER_RATE 500
 #define MESSAGE_RATE 10
@@ -28,6 +28,7 @@ int main (void)
     tinygl_init (PACER_RATE);
     pacer_init (PACER_RATE);
     navswitch_init();
+    ir_uart_init ();
 
 
     // Initial start state of the slider bar
