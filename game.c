@@ -85,9 +85,15 @@ int main (void)
                 ball_direction = -1;
             } else if (ball_x1 == 4) {
                 return;
-            } else if (ball_x1 == 0) {
+            } else if (ball_x1 != 0) {
+                if (ball_y1 == 0 && angle_y != 0) {
+                    angle_y = 1;
+                } else if (ball_y1 == 6 && angle_y != 0) {
+                    angle_y = -1;
+                }
+            } else {
                 ball_direction = 1;
-                angle_y = 0;
+                angle_y = 0;  
             }
 
             ball_x1 += ball_direction;
