@@ -37,6 +37,9 @@ int main (void)
     // Initial start state of the ball
     uint8_t ball_x1 = 0;
     uint8_t ball_y1 = 3;
+    uint8_t ball_direction = 1;
+    uint8_t angle_x = 0;
+    uint8_t angle_y = 0;
 
     // Draw initial slider bar
     tinygl_draw_line (tinygl_point (X_POS, y1), tinygl_point (X_POS, y2), 1);
@@ -70,19 +73,30 @@ int main (void)
                 tinygl_draw_line(tinygl_point(X_POS, y1), tinygl_point(X_POS, y2), 1); // Turn on new state
             }
         }
-        if (ball_tick >= 100) {
+        if (ball_tick >= 200) {
             ball_tick = 0;
             tinygl_draw_point(tinygl_point(ball_x1, ball_y1), 0);
 
             if (ball_x1 == 3 && (ball_y1 >= y1 && ball_y1 <= y2)) {
-                ball_x1 = 0;
+                if (ball_y1 == y1) {
+                    angle_x = -1;
+                    angle_y = -1;
+                } else if (ball_y1 == y2) {
+                    angle_x = 1;
+                    angle_y = 1;
+                }
+                ball_direction = -1;
             } else if (ball_x1 == 4) {
-                ball_x1 = 0;
-            } else {
-                ball_x1++;
+                return;
+            } else if (ball_x1 == 0) {
+                ball_direction = 1;
+                angle_x = 0;
+                angle_y = 0;
             }
 
-            tinygl_draw_point(tinygl_point(ball_x1, ball_y1), 1);
+            ball_x1 += ball_direction;
+
+            tinygl_draw_point(tinygl_point(ball_x1+angle_x, ball_y1+angle_y), 1);
 
             // if barrier is there then not allowed past x=3, if barrier not there it can go to x=4. After both cases, reset to x = 0
         }
