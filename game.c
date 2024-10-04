@@ -72,30 +72,17 @@ int main (void)
         }
         if (ball_tick >= 100) {
             ball_tick = 0;
-            if (ball_x1 == 4 && ((ball_y1 < y1 && ball_y1 < y2) || (ball_y1 > y1 && ball_y1 > y2))){
-                tinygl_draw_point(tinygl_point (ball_x1, ball_y1), 0);
-                ball_x1 = 0;
-                tinygl_draw_point(tinygl_point (ball_x1, ball_y1), 1);
-            } else if (ball_x1 == 3 && !((ball_y1 < y1 && ball_y1 < y2) || (ball_y1 > y1 && ball_y1 > y2))){
-                if (ball_y1 == y1) {
-                    //Go left
-                    tinygl_draw_point(tinygl_point (ball_x1, ball_y1), 0);
-                    tinygl_draw_point(tinygl_point (ball_x1--, ball_y1--), 1);
+            tinygl_draw_point(tinygl_point(ball_x1, ball_y1), 0);
 
-                } else if (ball_y1 == y2) {
-                    continue;
-                } else {
-                    continue;
-                }
-
-                tinygl_draw_point(tinygl_point (ball_x1, ball_y1), 0);
+            if (ball_x1 == 3 && (ball_y1 >= y1 && ball_y1 <= y2)) {
                 ball_x1 = 0;
-                tinygl_draw_point(tinygl_point (ball_x1, ball_y1), 1);
+            } else if (ball_x1 == 4) {
+                ball_x1 = 0;
             } else {
-                tinygl_draw_point(tinygl_point (ball_x1, ball_y1), 0);
                 ball_x1++;
-                tinygl_draw_point(tinygl_point (ball_x1, ball_y1), 1);
             }
+
+            tinygl_draw_point(tinygl_point(ball_x1, ball_y1), 1);
 
             // if barrier is there then not allowed past x=3, if barrier not there it can go to x=4. After both cases, reset to x = 0
         }
