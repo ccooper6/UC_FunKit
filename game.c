@@ -9,131 +9,137 @@
 #define MESSAGE_RATE 10
 #define X_POS 4
 
-// Make an enum of states -> start, play, end
-// Make a struct of the game state
-enum game_state {START, PLAY, END};
-typedef enum game_state game_state_t;
+typedef struct {
+    uint8_t y1;
+    uint8_t y2;
+} slider_t;
 
-int main (void)
-{
-    // Initialise the program
+typedef struct {
+    uint8_t x;
+    uint8_t y;
+    int8_t direction;
+    int8_t angle;
+} ball_t;
+
+typedef enum {
+    START,
+    PLAY,
+    END
+} game_state_t;
+
+void init_system(void) {
     system_init();
-    tinygl_init (PACER_RATE);
-    pacer_init (PACER_RATE);
+    tinygl_init(PACER_RATE);
+    pacer_init(PACER_RATE);
     navswitch_init();
-    ir_uart_init ();
+    ir_uart_init();
+}
 
+void init_game(slider_t *slider, ball_t *ball) {
+    slider->y1 = 2;
+    slider->y2 = 4;
 
+    ball->x = 0;
+    ball->y = 3;
+    ball->direction = 1;
+    ball->angle = 0;
 
+    tinygl_font_set(&font3x5_1);
+    tinygl_text_speed_set(10);
+    tinygl_text_dir_set (TINYGL_TEXT_DIR_ROTATE);
+    tinygl_text_mode_set (TINYGL_TEXT_MODE_SCROLL);
+}
+
+void update_slider(slider_t *slider) {
+    if (navswitch_push_event_p(NAVSWITCH_SOUTH) && slider->y2 < 6) {
+        tinygl_draw_line(tinygl_point(X_POS, slider->y1), tinygl_point(X_POS, slider->y2), 0);
+        slider->y1++;
+        slider->y2++;
+        tinygl_draw_line(tinygl_point(X_POS, slider->y1), tinygl_point(X_POS, slider->y2), 1);
+    }
+
+    if (navswitch_push_event_p(NAVSWITCH_NORTH) && slider->y1 > 0) {
+        tinygl_draw_line(tinygl_point(X_POS, slider->y1), tinygl_point(X_POS, slider->y2), 0);
+        slider->y1--;
+        slider->y2--;
+        tinygl_draw_line(tinygl_point(X_POS, slider->y1), tinygl_point(X_POS, slider->y2), 1);
+    }
+}
+
+void update_ball(ball_t *ball, slider_t *slider, uint16_t *ball_tick) {
+    (*ball_tick)++;
+    if (*ball_tick >= 200) {
+        *ball_tick = 0;
+        tinygl_draw_point(tinygl_point(ball->x, ball->y), 0);
+
+        if (ball->x == 3 && (ball->y >= slider->y1 && ball->y <= slider->y2)) {
+            ball->angle = (ball->y == slider->y1) ? -1 : (ball->y == slider->y2) ? 1 : 0;
+            ball->direction = -1;
+        } else if (ball->x == 4) {
+            return;
+        } else if (ball->x != 0) {
+            if (ball->y == 0 && ball->angle != 0) {
+                ball->angle = 1;
+            } else if (ball->y == 6 && ball->angle != 0) {
+                ball->angle = -1;
+            }
+        } else {
+            ball->direction = 1;
+            ball->angle = 0;
+        }
+
+        ball->x += ball->direction;
+        ball->y += ball->angle;
+
+        tinygl_draw_point(tinygl_point(ball->x, ball->y), 1);
+    }
+}
+
+void transmit_ball(ball_t *ball) {
+    if (ball->x == 0 && ball->direction == -1) {
+        ir_uart_putc(ball->y | (ball->angle << 3));
+        tinygl_draw_point(tinygl_point(ball->x, ball->y), 0);
+    }
+}
+
+void receive_ball(ball_t *ball) {
+    if (ir_uart_read_ready_p()) {
+        char ch = ir_uart_getc();
+        ball->y = ch & 0x7;
+        ball->angle = (ch >> 3) & 0x7;
+        ball->direction = 1;
+        tinygl_draw_point(tinygl_point(ball->x, ball->y), 1);
+    }
+}
+
+int main(void) {
+    slider_t slider;
+    ball_t ball;
     game_state_t game_state = START;
-
-
-    // Initial start state of the slider bar
-    uint8_t y1 = 2;
-    uint8_t y2 = 4;
-
-    // Initial start state of the ball
-    uint8_t ball_x1 = 0;
-    uint8_t ball_y1 = 3;
-    int8_t ball_direction = 1;
-    uint8_t angle_y = 0;
-
-    // Draw initial slider bar
-    //tinygl_draw_line (tinygl_point (X_POS, y1), tinygl_point (X_POS, y2), 1);
-
-    //tinygl_draw_point(tinygl_point (ball_x1, ball_y1), 1);
-
     uint16_t ball_tick = 0;
 
-    if (game_state == START) {
-      	tinygl_font_set (&font3x5_1);
-          tinygl_text_speed_set (10);
-    	tinygl_text("Select your player");
-    	tinygl_text_mode_set (TINYGL_TEXT_MODE_SCROLL);
-        tinygl_text_dir_set (TINYGL_TEXT_DIR_ROTATE);
-    }
+    init_system();
+    init_game(&slider, &ball);
+    tinygl_text("Choose Player 1");
 
-
-//    while (1)
-//    {
-//        pacer_wait();
-//        tinygl_update();
-//        navswitch_update();
-//        ball_tick++;
-//
-//        if (navswitch_push_event_p (NAVSWITCH_SOUTH)) { // South is left when green light is top right of the board
-//            if (y2 < 6) { // Check slider bar doesn't go out of bounds
-//                tinygl_draw_line(tinygl_point(X_POS, y1), tinygl_point(X_POS, y2), 0); // Turn off old state
-//                y1++;
-//                y2++;
-//                tinygl_draw_line(tinygl_point(X_POS, y1), tinygl_point(X_POS, y2), 1); // Turn on new state
-//            }
-//        }
-//
-//        if (navswitch_push_event_p (NAVSWITCH_NORTH)) {
-//            if (y1 > 0) { // Check slider bar doesn't go out of bounds
-//                tinygl_draw_line(tinygl_point(X_POS, y1), tinygl_point(X_POS, y2), 0); // Turn off old state
-//                y1--;
-//                y2--;
-//                tinygl_draw_line(tinygl_point(X_POS, y1), tinygl_point(X_POS, y2), 1); // Turn on new state
-//            }
-//        }
-//        if (ball_tick >= 200) {
-//            ball_tick = 0;
-//            tinygl_draw_point(tinygl_point(ball_x1, ball_y1), 0);
-//
-//            if (ball_x1 == 3 && (ball_y1 >= y1 && ball_y1 <= y2)) {
-//                if (ball_y1 == y1) {
-//                    angle_y = -1;
-//                } else if (ball_y1 == y2) {
-//                    angle_y = 1;
-//                }
-//                ball_direction = -1;
-//            } else if (ball_x1 == 4) {
-//                return;
-//            } else if (ball_x1 != 0) {
-//                if (ball_y1 == 0 && angle_y != 0) {
-//                    angle_y = 1;
-//                } else if (ball_y1 == 6 && angle_y != 0) {
-//                    angle_y = -1;
-//                }
-//            } else {
-//                ball_direction = 1;
-//                angle_y = 0;
-//            }
-//
-//            ball_x1 += ball_direction;
-//            ball_y1 += angle_y;
-//
-//            tinygl_draw_point(tinygl_point(ball_x1, ball_y1), 1);
-//        }
-//
-//        // ir transmit
-//		if (ball_x1 == 0 && ball_direction == -1) {
-//           	ir_uart_putc(ball_y1 | (angle_y << 3));
-//            tinygl_draw_point(tinygl_point(ball_x1, ball_y1), 0);
-//		}
-//
-//
-//        if (ir_uart_read_ready_p()) {
-//            char ch;
-//            ch = ir_uart_getc ();
-//            // Decode the message
-//            ball_y1 = ch & 0x7;
-//            angle_y = (ch >> 3) & 0x7;
-//            ball_direction = 1;
-//
-//            tinygl_draw_point(tinygl_point(ball_x1, ball_y1), 1);
-//        }
-//        }
-
-	while(1) {
-                         pacer_wait ();
-
+    while (1) {
+        pacer_wait();
         tinygl_update();
+        navswitch_update();
+
+        switch (game_state) {
+            case START:
+                break;
+            case PLAY:
+                update_slider(&slider);
+                update_ball(&ball, &slider, &ball_tick);
+                transmit_ball(&ball);
+                receive_ball(&ball);
+                break;
+            case END:
+                // Handle end state
+                break;
+        }
     }
-
-
-
     return 0;
 }
