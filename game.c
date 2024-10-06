@@ -105,22 +105,20 @@ int main (void)
 
         // ir transmit
 		if (ball_x1 == 0 && ball_direction == -1) {
-        	ir_uart_putc(ball_y1);
-                //un draw the ball
+           	ir_uart_putc(ball_y1 | (angle_y << 3));
             tinygl_draw_point(tinygl_point(ball_x1, ball_y1), 0);
 		}
 
-        // if revieve a message, draw the ball according to the message
+
         if (ir_uart_read_ready_p()) {
             char ch;
             ch = ir_uart_getc ();
-            ball_x1 = 0;
-            ball_y1 = ch;
+            // Decode the message
+            ball_y1 = ch & 0x7;
+            angle_y = (ch >> 3) & 0x7;
             ball_direction = 1;
-            angle_y = 0;
 
             tinygl_draw_point(tinygl_point(ball_x1, ball_y1), 1);
-
         }
 
 
