@@ -120,7 +120,7 @@ int main(void) {
 
     init_system();
     init_game(&slider, &ball);
-    tinygl_text("Choose Player 1");
+    tinygl_text("CHOOSE PLAYER 1");
 
     while (1) {
         pacer_wait();
