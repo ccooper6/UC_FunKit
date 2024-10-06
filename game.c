@@ -100,19 +100,21 @@ void update_ball(ball_t *ball, slider_t *slider, uint16_t *ball_tick) {
     }
 }
 
-void transmit_ball(ball_t *ball) {
+void transmit_ball(ball_t *ball, player_t *player) {
     if (ball->x == 0 && ball->direction == -1) {
         ir_uart_putc(ball->y | (ball->angle << 3));
+        *player = PLAYER2;
         tinygl_draw_point(tinygl_point(ball->x, ball->y), 0);
     }
 }
 
-void receive_ball(ball_t *ball) {
+void receive_ball(ball_t *ball, player_t *player) {
     if (ir_uart_read_ready_p()) {
         char ch = ir_uart_getc();
         ball->y = ch & 0x7;
         ball->angle = (ch >> 3) & 0x7;
         ball->direction = 1;
+        *player = PLAYER1;
         tinygl_draw_point(tinygl_point(ball->x, ball->y), 1);
     }
 }
@@ -161,9 +163,12 @@ int main(void) {
                 break;
             case PLAY:
                 update_slider(&slider);
-                update_ball(&ball, &slider, &ball_tick);
-                transmit_ball(&ball);
-                receive_ball(&ball);
+                if (player == PLAYER1) {
+                    update_ball(&ball, &slider, &ball_tick);
+                    transmit_ball(&ball, &player);
+                } else {
+                    receive_ball(&ball, &player);
+                }
                 break;
             case END:
                 // Handle end state
