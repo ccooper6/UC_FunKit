@@ -48,9 +48,9 @@ int main (void)
     if (game_state == START) {
       	tinygl_font_set (&font3x5_1);
           tinygl_text_speed_set (10);
-    	tinygl_text("Select your player");
-    	tinygl_text_mode_set (TINYGL_TEXT_MODE_SCROLL);
         tinygl_text_dir_set (TINYGL_TEXT_DIR_ROTATE);
+    	tinygl_text_mode_set (TINYGL_TEXT_MODE_SCROLL);
+    	tinygl_text("1 OR 2");
     }
 
 
