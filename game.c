@@ -101,11 +101,27 @@ int main (void)
             ball_y1 += angle_y;
 
             tinygl_draw_point(tinygl_point(ball_x1, ball_y1), 1);
-
-            // if barrier is there then not allowed past x=3, if barrier not there it can go to x=4. After both cases, reset to x = 0
         }
 
+        // ir transmit
+		if (ball_x1 == 0) {
+        	ir_uart_putc(ball_y1);
+                //un draw the ball
+            tinygl_draw_point(tinygl_point(ball_x1, ball_y1), 0);
+		}
 
+        // if revieve a message, draw the ball according to the message
+        if (ir_uart_read_ready_p()) {
+            char ch;
+            ch = ir_uart_getc ();
+            ball_x1 = 0;
+            ball_y1 = ch;
+            ball_direction = 1;
+            angle_y = 0;
+
+            tinygl_draw_point(tinygl_point(ball_x1, ball_y1), 1);
+
+        }
 
 
 
