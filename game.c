@@ -38,7 +38,7 @@ int main (void)
     // Initial start state of the ball
     uint8_t ball_x1 = 0;
     uint8_t ball_y1 = 3;
-    uint8_t ball_direction = 1;
+    int8_t ball_direction = 1;
     uint8_t angle_y = 0;
 
     // Draw initial slider bar
@@ -104,7 +104,7 @@ int main (void)
         }
 
         // ir transmit
-		if (ball_x1 == 0) {
+		if (ball_x1 == 0 && ball_direction == -1) {
         	ir_uart_putc(ball_y1);
                 //un draw the ball
             tinygl_draw_point(tinygl_point(ball_x1, ball_y1), 0);
