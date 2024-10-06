@@ -116,11 +116,11 @@ void send_start_notification(void) {
     ir_uart_putc('S');
 }
 
-void recieve_start_notification(void) {
+void recieve_start_notification(game_state_t *game_state) {
     if (ir_uart_read_ready_p()) {
         char ch = ir_uart_getc();
         if (ch == 'S') {
-            game_state_t game_state = PLAY;
+            *game_state = PLAY;
             tinygl_clear();
         }
     }
@@ -143,7 +143,7 @@ int main(void) {
 
         switch (game_state) {
             case START:
-                recieve_start_notification();
+                recieve_start_notification(&game_state);
                 if (navswitch_push_event_p(NAVSWITCH_PUSH)) {
                     send_start_notification();
                     game_state = PLAY;
