@@ -27,6 +27,11 @@ typedef enum {
     END
 } game_state_t;
 
+typedef enum {
+    PLAYER1,
+    PLAYER2
+} player_t;
+
 void init_system(void) {
     system_init();
     tinygl_init(PACER_RATE);
@@ -116,11 +121,12 @@ void send_start_notification(void) {
     ir_uart_putc('S');
 }
 
-void recieve_start_notification(void) {
+void recieve_start_notification(game_state_t *game_state, player_t *player) {
     if (ir_uart_read_ready_p()) {
         char ch = ir_uart_getc();
         if (ch == 'S') {
-            game_state_t game_state = PLAY;
+            *game_state = PLAY;
+            *player = PLAYER2;
             tinygl_clear();
         }
     }
@@ -136,6 +142,8 @@ int main(void) {
     init_game(&slider, &ball);
     tinygl_text("CHOOSE PLAYER 1");
 
+    player_t player;
+
     while (1) {
         pacer_wait();
         tinygl_update();
@@ -143,10 +151,11 @@ int main(void) {
 
         switch (game_state) {
             case START:
-                recieve_start_notification();
+                recieve_start_notification(&game_state, &player);
                 if (navswitch_push_event_p(NAVSWITCH_PUSH)) {
                     send_start_notification();
                     game_state = PLAY;
+                    player = PLAYER1;
                     tinygl_clear();
                 }
                 break;
