@@ -158,6 +158,8 @@ int main(void) {
                     send_start_notification();
                     game_state = PLAY;
                     player = PLAYER1;
+                    //draw slider
+                    tinygl_draw_line(tinygl_point(X_POS, slider.y1), tinygl_point(X_POS, slider.y2), 1);
                     tinygl_clear();
                 }
                 break;
