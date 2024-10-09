@@ -167,7 +167,7 @@ void check_game_over(game_state_t *game_state, uint8_t *player_score) {
 
     if (*player_score == 3) {
         *game_state = END;
-        ir_uart_putc("E");
+        ir_uart_putc('E');
     }
 }
 
@@ -189,7 +189,7 @@ int main(void) {
 
     init_system();
 
-    srand(time(TCNT0)); // need to generate a random "seed"?
+    //srand(time(TCNT0)); // need to generate a random "seed"?
 
     init_game(&slider, &ball);
     tinygl_text("CHOOSE PLAYER 1");
