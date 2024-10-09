@@ -1,9 +1,14 @@
+#include <time.h>
+#include <stdlib.h> // Imports for random
+#include <avr/io.h>
+
 #include "system.h"
 #include "pacer.h"
 #include "tinygl.h"
 #include "../fonts/font3x5_1.h"
 #include "navswitch.h"
 #include "ir_uart.h"
+#include "timer0.h"
 
 #define PACER_RATE 500
 #define MESSAGE_RATE 10
@@ -38,6 +43,7 @@ void init_system(void) {
     pacer_init(PACER_RATE);
     navswitch_init();
     ir_uart_init();
+    timer0_init();
 }
 
 void init_game(slider_t *slider, ball_t *ball) {
@@ -45,7 +51,7 @@ void init_game(slider_t *slider, ball_t *ball) {
     slider->y2 = 4;
 
     ball->x = 0;
-    ball->y = 3;
+    ball->y = 3; // Starts the ball at a random position
     ball->direction = 1;
     ball->angle = 0;
 
@@ -73,6 +79,8 @@ void update_slider(slider_t *slider) {
 
 void player_lost_round(uint8_t *player_score) {
     (*player_score)++;
+    tinygl_clear();
+    //init_game();
 }
 
 void transmit_ball(ball_t *ball, player_t *player);
@@ -89,13 +97,16 @@ void update_ball(ball_t *ball, player_t *player, slider_t *slider, uint16_t *bal
             } else if (ball->y == slider->y2) {
                 ball->angle = 1;
             } else {
-                ball->angle = 0;
+                int random_value = rand() % 3 - 1;  // Generates -1, 0, or 1
+                ball->angle = random_value;
             }
             ball->direction = -1;
         } else if (ball->x == 0 && ball->direction == -1) {
             transmit_ball(ball, player);
+            return;
         } else if (ball->x == 4) {
             player_lost_round(player_score);
+            return;
         } else if (ball->x != 0) {
             if (ball->y == 0 && ball->angle != 0) {
                 ball->angle = 1;
@@ -178,6 +189,9 @@ int main(void) {
     uint16_t ball_tick = 0;
 
     init_system();
+
+    srand(time(TCNT0)); // need to generate a random "seed"?
+
     init_game(&slider, &ball);
     tinygl_text("CHOOSE PLAYER 1");
 
