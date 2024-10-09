@@ -77,10 +77,10 @@ void update_slider(slider_t *slider) {
     }
 }
 
-void player_lost_round(uint8_t *player_score) {
+void player_lost_round(uint8_t *player_score, slider_t *slider, ball_t *ball) {
     (*player_score)++;
     tinygl_clear();
-    //init_game();
+    init_game(slider, ball);
 }
 
 void transmit_ball(ball_t *ball, player_t *player);
@@ -97,15 +97,14 @@ void update_ball(ball_t *ball, player_t *player, slider_t *slider, uint16_t *bal
             } else if (ball->y == slider->y2) {
                 ball->angle = 1;
             } else {
-                int random_value = rand() % 3 - 1;  // Generates -1, 0, or 1
-                ball->angle = random_value;
+                ball->angle = rand() % 3 - 1; // should generate -1, 0 or 1??
             }
             ball->direction = -1;
         } else if (ball->x == 0 && ball->direction == -1) {
             transmit_ball(ball, player);
             return;
         } else if (ball->x == 4) {
-            player_lost_round(player_score);
+            player_lost_round(player_score, slider, ball);
             return;
         } else if (ball->x != 0) {
             if (ball->y == 0 && ball->angle != 0) {
