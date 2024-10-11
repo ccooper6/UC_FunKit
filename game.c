@@ -9,6 +9,7 @@
 #define PACER_RATE 500
 #define MESSAGE_RATE 10
 #define X_POS 4
+#define BALL_MESSAGE_LENGTH 4
 
 typedef struct {
     uint8_t y1;
@@ -72,67 +73,106 @@ void update_slider(slider_t *slider) {
     }
 }
 
-void player_lost_round(uint8_t *player_score, slider_t *slider, ball_t *ball) {
-    (*player_score)++;
-    tinygl_clear();
-    init_game(slider, ball);
-}
-
-void transmit_ball(ball_t *ball, player_t *player);
-
-void update_ball(ball_t *ball, player_t *player, slider_t *slider, uint16_t *ball_tick, uint8_t *player_score) {
-    (*ball_tick)++;
-    if (*ball_tick >= 200) {
-        *ball_tick = 0;
-        tinygl_draw_point(tinygl_point(ball->x, ball->y), 0);
-
-        if (ball->x == 3 && (ball->y >= slider->y1 && ball->y <= slider->y2)) {
-            if (ball->y == slider->y1) {
-                ball->angle = -1;
-            } else if (ball->y == slider->y2) {
-                ball->angle = 1;
-            } else {
-                ball->angle = 0;
-            }
-            ball->direction = -1;
-        } else if (ball->x == 0 && ball->direction == -1) {
-            transmit_ball(ball, player);
-            return;
-        } else if (ball->x == 4) {
-            player_lost_round(player_score, slider, ball);
-            return;
-        } else if (ball->x != 0) {
-            if (ball->y == 0 && ball->angle != 0) {
-                ball->angle = 1;
-            } else if (ball->y == 6 && ball->angle != 0) {
-                ball->angle = -1;
-            }
-        } else {
-            ball->direction = 1;
-            ball->angle = 0;
+ void check_game_over(game_state_t *game_state, uint8_t *player_score) {
+     if (*player_score == 3) {
+         *game_state = END;
+         uint8_t message[BALL_MESSAGE_LENGTH];
+        message[0] = 0x1;
+        message[1] = 0;
+        message[2] = 0;
+        message[3] = 0;
+        for (int i = 0; i < BALL_MESSAGE_LENGTH; i++) {
+            ir_uart_putc(message[i]);
         }
 
-        ball->x += ball->direction;
-        ball->y += ball->angle;
+     }
+ }
 
-        tinygl_draw_point(tinygl_point(ball->x, ball->y), 1);
+
+void player_lost_round(uint8_t *player_score, slider_t *slider, ball_t *ball, game_state_t *game_state) {
+    (*player_score)++;
+    if (*player_score == 3) {
+        check_game_over(*game_state, *player_score);
+    } else {
+        tinygl_clear();
+        init_game(slider, ball);
     }
 }
 
-void transmit_ball(ball_t *ball, player_t *player) {
-    ir_uart_putc(ball->y | (ball->angle << 3));
+void transmit_ball(ball_t *ball, player_t *player, uint8_t *player_score);
+
+void update_ball(ball_t *ball, player_t *player, slider_t *slider, uint16_t *ball_tick, uint8_t *player_score, game_state_t *game_state) {
+    (*ball_tick)++;
+    if (*ball_tick < 200) {
+        return;
+    }
+    *ball_tick = 0;
+    tinygl_draw_point(tinygl_point(ball->x, ball->y), 0);
+
+    if (ball->x == 3 && ball->y >= slider->y1 && ball->y <= slider->y2) { // Ball hits slider
+        if (ball->y == slider->y1) { // Handle slider collisions
+            ball->angle = -1;
+        } else if (ball->y == slider->y2) {
+            ball->angle = 1;
+        } else {
+            ball->angle = 0;
+        }
+        ball->direction = -1;
+    } else if (ball->x == 0 && ball->direction == -1) { // Check if ball reaches player end
+        transmit_ball(ball, player, player_score);
+        return;
+    } else if (ball->x == 4) {
+        player_lost_round(player_score, slider, ball, *game_state);
+        return;
+    } else if ((ball->y == 0 && ball->angle != 0) || (ball->y == 6 && ball->angle != 0)) { // Check if ball hits wall
+        if (ball->y == 0) { // Wall collisions change direction
+            ball->angle = 1;
+        } else if (ball->y == 6) {
+            ball->angle = -1;
+        }
+    }
+
+    ball->x += ball->direction; // Move ball
+    ball->y += ball->angle;
+
+    tinygl_draw_point(tinygl_point(ball->x, ball->y), 1);
+}
+
+void transmit_ball(ball_t *ball, player_t *player, uint8_t *player_score) {
+    uint8_t message[BALL_MESSAGE_LENGTH];
+
+    message[0] = 0x0;
+    message[1] = ball->y;
+    message[2] = (ball->direction & 0x1) | ((ball->angle & 0x3) << 1);
+    message[3] = *player_score;
+
+    for (int i = 0; i < BALL_MESSAGE_LENGTH; i++) {
+        ir_uart_putc(message[i]);
+    }
+
     *player = PLAYER2;
     tinygl_draw_point(tinygl_point(ball->x, ball->y), 0);
 }
 
-void receive_ball(ball_t *ball, player_t *player) {
+void receive_transmission(ball_t *ball, player_t *player, uint8_t *player_score, game_state_t *game_state) {
     if (ir_uart_read_ready_p()) {
-        char ch = ir_uart_getc();
-        ball->y = ch & 0x7;
-        ball->angle = (ch >> 3) & 0x7;
+        uint8_t message[BALL_MESSAGE_LENGTH];
+
+        for (int i = 0; i < BALL_MESSAGE_LENGTH; i++) {
+            message[i] = ir_uart_getc();
+        }
+        if (message[0] == 0x0) {
+        ball->y = message[1];
+        ball->direction = message[2] & 0x1;
+        ball->angle = (message[2] >> 1) & 0x3;
+        *player_score = message[3];
         ball->direction = 1;
         *player = PLAYER1;
         tinygl_draw_point(tinygl_point(ball->x, ball->y), 1);
+        } else {
+            *game_state = END;
+        }
+
     }
 }
 
@@ -152,20 +192,8 @@ void recieve_start_notification(game_state_t *game_state, player_t *player, slid
     }
 }
 
- void check_game_over(game_state_t *game_state, uint8_t *player_score) {
-     if (*player_score == 3) {
-         *game_state = END;
-         ir_uart_putc('E');
-     }
- }
 
- void confirm_game_over(game_state_t *game_state) {
-         char ch = ir_uart_getc();
-         if (ch == 'E') {
-             *game_state = END;
-         }
 
- }
 
 void show_winner(uint8_t player_score) {
     tinygl_clear();
@@ -212,12 +240,11 @@ int main(void) {
                 }
                 update_slider(&slider);
                 if (player == PLAYER1) {
-                    update_ball(&ball, &player, &slider, &ball_tick, &player_score);
-                } else if (player == PLAYER1 && ir_uart_read_ready_p()) {
-                    confirm_game_over(&game_state);
+                    update_ball(&ball, &player, &slider, &ball_tick, &player_score, &game_state);
                 } else {
-                    receive_ball(&ball, &player);
+                    receive_transmission(&ball, &player, &player_score, &game_state);
                 }
+
                 break;
             case END:
                 show_winner(player_score);
