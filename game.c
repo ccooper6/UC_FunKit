@@ -152,19 +152,20 @@ void recieve_start_notification(game_state_t *game_state, player_t *player, slid
     }
 }
 
-// void check_game_over(game_state_t *game_state, uint8_t *player_score) {
-//     if (ir_uart_read_ready_p()) {
-//         char ch = ir_uart_getc();
-//         if (ch == 'E') {
-//             *game_state = END;
-//         }
-//     }
-//
-//     if (*player_score == 3) {
-//         *game_state = END;
-//         ir_uart_putc('E');
-//     }
-// }
+ void check_game_over(game_state_t *game_state, uint8_t *player_score) {
+     if (*player_score == 3) {
+         *game_state = END;
+         ir_uart_putc('E');
+     }
+ }
+
+ void confirm_game_over(game_state_t *game_state) {
+         char ch = ir_uart_getc();
+         if (ch == 'E') {
+             *game_state = END;
+         }
+
+ }
 
 void show_winner(uint8_t player_score) {
     tinygl_clear();
@@ -206,10 +207,14 @@ int main(void) {
                 }
                 break;
             case PLAY:
-                //check_game_over(&game_state, &player_score);
+                if (player_score >= 3) {
+                    check_game_over(&game_state, &player_score);
+                }
                 update_slider(&slider);
                 if (player == PLAYER1) {
                     update_ball(&ball, &player, &slider, &ball_tick, &player_score);
+                } else if (player == PLAYER1 && ir_uart_read_ready_p()) {
+                    confirm_game_over(&game_state);
                 } else {
                     receive_ball(&ball, &player);
                 }
