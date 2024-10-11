@@ -1,7 +1,3 @@
-#include <time.h>
-#include <stdlib.h> // Imports for random
-#include <avr/io.h>
-
 #include "system.h"
 #include "pacer.h"
 #include "tinygl.h"
@@ -43,7 +39,6 @@ void init_system(void) {
     pacer_init(PACER_RATE);
     navswitch_init();
     ir_uart_init();
-    timer0_init();
 }
 
 void init_game(slider_t *slider, ball_t *ball) {
@@ -97,7 +92,7 @@ void update_ball(ball_t *ball, player_t *player, slider_t *slider, uint16_t *bal
             } else if (ball->y == slider->y2) {
                 ball->angle = 1;
             } else {
-                ball->angle = rand() % 3 - 1; // should generate -1, 0 or 1??
+                ball->angle = 0;
             }
             ball->direction = -1;
         } else if (ball->x == 0 && ball->direction == -1) {
@@ -157,19 +152,19 @@ void recieve_start_notification(game_state_t *game_state, player_t *player, slid
     }
 }
 
-void check_game_over(game_state_t *game_state, uint8_t *player_score) {
-    if (ir_uart_read_ready_p()) {
-        char ch = ir_uart_getc();
-        if (ch == 'E') {
-            *game_state = END;
-        }
-    }
-
-    if (*player_score == 3) {
-        *game_state = END;
-        ir_uart_putc('E');
-    }
-}
+// void check_game_over(game_state_t *game_state, uint8_t *player_score) {
+//     if (ir_uart_read_ready_p()) {
+//         char ch = ir_uart_getc();
+//         if (ch == 'E') {
+//             *game_state = END;
+//         }
+//     }
+//
+//     if (*player_score == 3) {
+//         *game_state = END;
+//         ir_uart_putc('E');
+//     }
+// }
 
 void show_winner(uint8_t player_score) {
     tinygl_clear();
@@ -188,8 +183,6 @@ int main(void) {
     uint16_t ball_tick = 0;
 
     init_system();
-
-    //srand(time(TCNT0)); // need to generate a random "seed"?
 
     init_game(&slider, &ball);
     tinygl_text("CHOOSE PLAYER 1");
@@ -213,7 +206,7 @@ int main(void) {
                 }
                 break;
             case PLAY:
-                check_game_over(&game_state, &player_score);
+                //check_game_over(&game_state, &player_score);
                 update_slider(&slider);
                 if (player == PLAYER1) {
                     update_ball(&ball, &player, &slider, &ball_tick, &player_score);
