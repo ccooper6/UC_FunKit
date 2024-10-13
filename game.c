@@ -57,7 +57,12 @@ void init_game(slider_t *slider, ball_t *ball) {
     tinygl_text_mode_set (TINYGL_TEXT_MODE_SCROLL);
 }
 
-void update_slider(slider_t *slider) {
+void update_slider(slider_t *slider, bool *slider_drawn) {
+    if (!*slider_drawn) {
+        tinygl_draw_line(tinygl_point(X_POS, slider->y1), tinygl_point(X_POS, slider->y2), 1);
+        *slider_drawn = true;
+    }
+
     if (navswitch_push_event_p(NAVSWITCH_SOUTH) && slider->y2 < 6) {
         tinygl_draw_line(tinygl_point(X_POS, slider->y1), tinygl_point(X_POS, slider->y2), 0);
         slider->y1++;
@@ -89,19 +94,20 @@ void update_slider(slider_t *slider) {
  }
 
 
-void player_lost_round(uint8_t *player_score, slider_t *slider, ball_t *ball, game_state_t *game_state) {
+void player_lost_round(uint8_t *player_score, slider_t *slider, ball_t *ball, game_state_t *game_state, bool *slider_drawn) {
     (*player_score)++;
     if (*player_score == 3) {
         check_game_over(game_state, player_score);
     } else {
         tinygl_clear();
         init_game(slider, ball);
+        *slider_drawn = false;
     }
 }
 
 void transmit_ball(ball_t *ball, player_t *player, uint8_t *player_score);
 
-void update_ball(ball_t *ball, player_t *player, slider_t *slider, uint16_t *ball_tick, uint8_t *player_score, game_state_t *game_state) {
+void update_ball(ball_t *ball, player_t *player, slider_t *slider, uint16_t *ball_tick, uint8_t *player_score, game_state_t *game_state, bool *slider_drawn) {
     (*ball_tick)++;
     if (*ball_tick < 200) {
         return;
@@ -122,7 +128,7 @@ void update_ball(ball_t *ball, player_t *player, slider_t *slider, uint16_t *bal
         transmit_ball(ball, player, player_score);
         return;
     } else if (ball->x == 4) {
-        player_lost_round(player_score, slider, ball, game_state);
+        player_lost_round(player_score, slider, ball, game_state, slider_drawn);
         return;
     } else if ((ball->y == 0 && ball->angle != 0) || (ball->y == 6 && ball->angle != 0)) { // Check if ball hits wall
         if (ball->y == 0) { // Wall collisions change direction
@@ -180,14 +186,13 @@ void send_start_notification(void) {
     ir_uart_putc('S');
 }
 
-void recieve_start_notification(game_state_t *game_state, player_t *player, slider_t *slider) {
+void recieve_start_notification(game_state_t *game_state, player_t *player) {
     if (ir_uart_read_ready_p()) {
         char ch = ir_uart_getc();
         if (ch == 'S') {
             *game_state = PLAY;
             *player = PLAYER2;
             tinygl_clear();
-            tinygl_draw_line(tinygl_point(X_POS, slider->y1), tinygl_point(X_POS, slider->y2), 1);
         }
     }
 }
@@ -218,6 +223,7 @@ int main(void) {
 
     uint8_t player_score = 0;
     bool end_text_set = false;
+    bool slider_drawn = false;
 
     while (1) {
         pacer_wait();
@@ -226,22 +232,21 @@ int main(void) {
 
         switch (game_state) {
             case START:
-                recieve_start_notification(&game_state, &player, &slider);
+                recieve_start_notification(&game_state, &player);
                 if (navswitch_push_event_p(NAVSWITCH_PUSH)) {
                     send_start_notification();
                     game_state = PLAY;
                     player = PLAYER1;
                     tinygl_clear();
-                    tinygl_draw_line(tinygl_point(X_POS, slider.y1), tinygl_point(X_POS, slider.y2), 1);
                 }
                 break;
             case PLAY:
                 if (player_score >= 3) {
                     check_game_over(&game_state, &player_score);
                 }
-                update_slider(&slider);
+                update_slider(&slider, &slider_drawn);
                 if (player == PLAYER1) {
-                    update_ball(&ball, &player, &slider, &ball_tick, &player_score, &game_state);
+                    update_ball(&ball, &player, &slider, &ball_tick, &player_score, &game_state, &slider_drawn);
                 } else {
                     receive_transmission(&ball, &player, &player_score, &game_state);
                 }
