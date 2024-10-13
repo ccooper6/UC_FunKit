@@ -253,11 +253,10 @@ int main(void) {
 
                 break;
             case END:
-            if (!end_text_set) {
-                show_winner(player_score);
-                end_text_set = true;
-            }
-
+                if (!end_text_set) {
+                    show_winner(player_score);
+                    end_text_set = true;
+                }
                 break;
         }
     }
