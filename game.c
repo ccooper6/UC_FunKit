@@ -92,7 +92,7 @@ void update_slider(slider_t *slider) {
 void player_lost_round(uint8_t *player_score, slider_t *slider, ball_t *ball, game_state_t *game_state) {
     (*player_score)++;
     if (*player_score == 3) {
-        check_game_over(*game_state, *player_score);
+        check_game_over(game_state, player_score);
     } else {
         tinygl_clear();
         init_game(slider, ball);
@@ -122,7 +122,7 @@ void update_ball(ball_t *ball, player_t *player, slider_t *slider, uint16_t *bal
         transmit_ball(ball, player, player_score);
         return;
     } else if (ball->x == 4) {
-        player_lost_round(player_score, slider, ball, *game_state);
+        player_lost_round(player_score, slider, ball, game_state);
         return;
     } else if ((ball->y == 0 && ball->angle != 0) || (ball->y == 6 && ball->angle != 0)) { // Check if ball hits wall
         if (ball->y == 0) { // Wall collisions change direction
@@ -217,6 +217,7 @@ int main(void) {
     tinygl_text("CHOOSE PLAYER 1");
 
     uint8_t player_score = 0;
+    bool end_text_set = false;
 
     while (1) {
         pacer_wait();
@@ -247,7 +248,11 @@ int main(void) {
 
                 break;
             case END:
+            if (!end_text_set) {
                 show_winner(player_score);
+                end_text_set = true;
+            }
+
                 break;
         }
     }
