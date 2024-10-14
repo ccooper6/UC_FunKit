@@ -7,15 +7,22 @@
 #include "transmission.h"
 
 void update_ball(ball_t *ball, player_t *player, slider_t *slider, uint16_t *ball_tick, uint8_t *player_score, game_state_t *game_state, bool *slider_drawn) {
+    tinygl_draw_point(tinygl_point(ball->x, ball->y), 1);
+
     (*ball_tick)++;
     if (*ball_tick < 200) {
         return;
     }
+
     *ball_tick = 0;
     tinygl_draw_point(tinygl_point(ball->x, ball->y), 0);
 
     if (ball->x == 3 && ball->y >= slider->y1 && ball->y <= slider->y2) { // Ball hits slider
-        if (ball->y == slider->y1) { // Handle slider collisions
+        if (ball->y == 6) { // Handle corner collisions
+            ball->angle = -1;
+        } else if (ball->y == 0) {
+            ball->angle = 1;
+        } else if (ball->y == slider->y1) { // Handle slider collisions
             ball->angle = -1;
         } else if (ball->y == slider->y2) {
             ball->angle = 1;

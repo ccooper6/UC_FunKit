@@ -4,6 +4,8 @@
 
 #include "initialising.h"
 
+#include <stdlib.h>
+
 #include "system.h"
 #include "tinygl.h"
 #include "pacer.h"
@@ -24,7 +26,7 @@ void init_game(slider_t *slider, ball_t *ball) {
     slider->y2 = 4;
 
     ball->x = 0;
-    ball->y = 3; // Starts the ball at a random position
+    ball->y = rand() % 7; // Starts the ball at a random position
     ball->direction = 1;
     ball->angle = 0;
 

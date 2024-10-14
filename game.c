@@ -8,8 +8,7 @@
 #include "transmission.h"
 #include "initialising.h"
 
-
-
+#include <stdlib.h>
 
 int main(void) {
     slider_t slider;
@@ -26,11 +25,13 @@ int main(void) {
     uint8_t player_score = 0;
     bool end_text_set = false;
     bool slider_drawn = false;
+    uint8_t count = 0;
 
     while (1) {
         pacer_wait();
         tinygl_update();
         navswitch_update();
+        count++;
 
         switch (game_state) {
             case START:
@@ -43,6 +44,7 @@ int main(void) {
                 }
                 break;
             case PLAY:
+                srand(count);
                 if (player_score >= 3) {
                     check_game_over(&game_state, &player_score);
                 }
