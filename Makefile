@@ -58,8 +58,26 @@ tinygl.o: ../../utils/tinygl.c ../../drivers/avr/system.h ../../drivers/display.
 navswitch.o: ../../drivers/navswitch.c ../../drivers/avr/delay.h ../../drivers/avr/pio.h ../../drivers/avr/system.h ../../drivers/navswitch.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
+ball.o: ball.c ball.h
+	$(CC) -c $(CFLAGS) $< -o $@
+
+game_state.o: game_state.c game_state.h
+	$(CC) -c $(CFLAGS) $< -o $@
+
+player.o: player.c player.h
+	$(CC) -c $(CFLAGS) $< -o $@
+
+slider.o: slider.c slider.h
+	$(CC) -c $(CFLAGS) $< -o $@
+
+transmission.o: transmission.c transmission.h
+	$(CC) -c $(CFLAGS) $< -o $@
+
+initialising.o: initialising.c initialising.h
+	$(CC) -c $(CFLAGS) $< -o $@
+
 # Link: create ELF output file from object files.
-game.out: game.o pio.o system.o timer.o display.o ledmat.o font.o pacer.o tinygl.o navswitch.o ir_uart.o timer0.o usart1.o prescale.o
+game.out: game.o pio.o system.o timer.o display.o ledmat.o font.o pacer.o tinygl.o navswitch.o ir_uart.o timer0.o usart1.o prescale.o ball.o game_state.o player.o slider.o transmission.o initialising.o
 	$(CC) $(CFLAGS) $^ -o $@ -lm
 	$(SIZE) $@
 

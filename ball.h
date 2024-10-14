@@ -1,15 +1,16 @@
+//
+// Created by Caleb Cooper on 14/10/2024.
+//
+
 #ifndef BALL_H
 #define BALL_H
-#include "system.h"
-#include "game.h"
+
+#include <stdint.h>
+#include "game_state.h"
 #include "player.h"
-#include "tinygl.h"
 #include "slider.h"
-#include "pong_system.h"
-#include "pong_game.h"
 
-
-typedef struct {
+typedef struct ball {
     uint8_t x;
     uint8_t y;
     int8_t direction;
@@ -19,6 +20,4 @@ typedef struct {
 
 void update_ball(ball_t *ball, player_t *player, slider_t *slider, uint16_t *ball_tick, uint8_t *player_score, game_state_t *game_state, bool *slider_drawn);
 
-void transmit_ball(ball_t *ball, player_t *player, uint8_t *player_score);
-
-#endif
+#endif //BALL_H

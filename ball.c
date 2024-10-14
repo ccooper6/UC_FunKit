@@ -1,10 +1,11 @@
-#include "system.h"
-#include "game.h"
-#include "player.h"
+//
+// Created by Caleb Cooper on 14/10/2024.
+//
+
+#include "ball.h"
 #include "tinygl.h"
-#include "slider.h"
-#include "pong_system.h"
-#include "pong_game.h"
+#include "transmission.h"
+
 void update_ball(ball_t *ball, player_t *player, slider_t *slider, uint16_t *ball_tick, uint8_t *player_score, game_state_t *game_state, bool *slider_drawn) {
     (*ball_tick)++;
     if (*ball_tick < 200) {
@@ -40,20 +41,4 @@ void update_ball(ball_t *ball, player_t *player, slider_t *slider, uint16_t *bal
     ball->y += ball->angle;
 
     tinygl_draw_point(tinygl_point(ball->x, ball->y), 1);
-}
-
-void transmit_ball(ball_t *ball, player_t *player, uint8_t *player_score) {
-    uint8_t message[BALL_MESSAGE_LENGTH];
-
-    message[0] = 0x0;
-    message[1] = ball->y;
-    message[2] = (ball->direction & 0x1) | ((ball->angle & 0x3) << 1);
-    message[3] = *player_score;
-
-    for (int i = 0; i < BALL_MESSAGE_LENGTH; i++) {
-        ir_uart_putc(message[i]);
-    }
-
-    *player = PLAYER2;
-    tinygl_draw_point(tinygl_point(ball->x, ball->y), 0);
 }
