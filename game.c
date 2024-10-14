@@ -35,7 +35,8 @@ int main(void) {
 
         switch (game_state) {
             case START:
-                recieve_start_notification(&game_state, &player);
+                srand(count);
+                receive_start_notification(&game_state, &player);
                 if (navswitch_push_event_p(NAVSWITCH_PUSH)) {
                     send_start_notification();
                     game_state = PLAY;

@@ -1,7 +1,8 @@
-//
-// Created by Caleb Cooper on 14/10/2024.
-//
-
+/** @file   transmission.c
+    @author Caleb Cooper (cco139), Joshua Ching (jch438)
+    @date   14 October 2024
+    @brief  Transmission functions for the game
+*/
 #include "transmission.h"
 #include <stdint.h>
 #include "tinygl.h"
@@ -53,7 +54,7 @@ void send_start_notification(void) {
     ir_uart_putc('S');
 }
 
-void recieve_start_notification(game_state_t *game_state, player_t *player) {
+void receive_start_notification(game_state_t *game_state, player_t *player) {
     if (ir_uart_read_ready_p()) {
         char ch = ir_uart_getc();
         if (ch == 'S') {

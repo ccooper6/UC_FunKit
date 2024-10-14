@@ -1,12 +1,14 @@
-//
-// Created by Caleb Cooper on 14/10/2024.
-//
-
+/** @file   game_state.c
+    @author Caleb Cooper (cco139), Joshua Ching (jch438)
+    @date   14 October 2024
+    @brief  Functions affecting the state of the game
+*/
 #include "game_state.h"
 #include "tinygl.h"
 #include "ir_uart.h"
 #include "initialising.h"
 
+/* Define the length of the message sent every time ball information is transmitted */
 #define BALL_MESSAGE_LENGTH 4
 
 void check_game_over(game_state_t *game_state, uint8_t *player_score) {

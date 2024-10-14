@@ -1,7 +1,6 @@
-//
-// Created by Caleb Cooper on 14/10/2024.
-//
-
+/** @file   player.c
+    @author Caleb Cooper (cco139), Joshua Ching (jch438)
+    @date   14 October 2024
+    @brief  Player structure definition, left blank but required for compiling
+*/
 #include "player.h"
-
-//Empty so compiles

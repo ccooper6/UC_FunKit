@@ -1,7 +1,8 @@
-//
-// Created by Caleb Cooper on 14/10/2024.
-//
-
+/** @file   ball.c
+    @author Caleb Cooper (cco139), Joshua Ching (jch438)
+    @date   14 October 2024
+    @brief  Ball functions for the game
+*/
 #include "ball.h"
 #include "tinygl.h"
 #include "transmission.h"

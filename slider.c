@@ -1,12 +1,11 @@
-//
-// Created by Caleb Cooper on 14/10/2024.
-//
-
+/** @file   slider.c
+    @author Caleb Cooper (cco139), Joshua Ching (jch438)
+    @date   14 October 2024
+    @brief  Slider functions for the game
+*/
 #include "slider.h"
 #include "navswitch.h"
 #include "tinygl.h"
-
-#define X_POS 4
 
 void update_slider(slider_t *slider, bool *slider_drawn) {
     if (!*slider_drawn) {

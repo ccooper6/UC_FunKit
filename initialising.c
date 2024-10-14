@@ -1,11 +1,11 @@
-//
-// Created by Caleb Cooper on 14/10/2024.
-//
-
+/** @file   initialising.c
+    @author Caleb Cooper (cco139), Joshua Ching (jch438)
+    @date   14 October 2024
+    @brief  Initialising functions for the game
+*/
 #include "initialising.h"
 
 #include <stdlib.h>
-
 #include "system.h"
 #include "tinygl.h"
 #include "pacer.h"
