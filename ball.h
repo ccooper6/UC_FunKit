@@ -21,6 +21,29 @@ typedef struct ball {
     int8_t angle;
 } ball_t;
 
+/** Checks if the ball has hit the slider
+* @param ball the pointer to the ball to check
+* @param slider the pointer to the slider to check
+*/
+bool ball_hits_slider(ball_t *ball, slider_t *slider);
+
+/**
+* Changes the trajectory of the ball when it hits the slider
+* @param ball the pointer to the ball to change the angle and direction of
+* @param slider the pointer to the slider use to base the changes off
+*/
+void change_ball_trajectory(ball_t *ball, slider_t *slider);
+
+/** Checks if the ball has hit the wall
+ * @param ball the pointer to the ball to check
+ */
+bool ball_hits_wall(ball_t *ball);
+
+/** Checks if the ball has missed the slider
+ * @param ball the pointer to the ball to check
+ */
+bool ball_misses_slider(ball_t *ball);
+
 /**
  * Updates the balls position according to direction, angle and collisions
  * @param ball the ball to update
