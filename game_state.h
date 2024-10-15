@@ -3,7 +3,11 @@
     @date   14 October 2024
     @brief  Functions affecting the state of the game
 
-    @defgroup
+    @defgroup Game State
+    This module implements the three game states that game has. 
+    START is the opening screen.
+    PLAY is the gameplay screen.
+    END is the results screen. Happens once the winning condition is met.
 */
 #ifndef GAME_STATE_H
 #define GAME_STATE_H
@@ -12,7 +16,7 @@
 #include <stdbool.h>
 #include "slider.h"
 
-/* Forward declaration of ball_t (circular dependency)*/
+/* Forward declaration of ball_t */
 typedef struct ball ball_t;
 
 /* Defines the states a player can be in */
@@ -28,7 +32,7 @@ typedef enum {
 */
 void check_game_over(game_state_t *game_state, uint8_t *player_score);
 
-/** Increments the player score and resets the game if the player has lost the round
+/** Increments the player score and starts a new round if the player has lost the round
  * @param player_score the pointer to the current score of the player
  * @param slider the pointer to the players slider
  * @param ball the pointer to the players ball

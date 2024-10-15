@@ -3,7 +3,8 @@
     @date   14 October 2024
     @brief  Slider functions for the game
 
-    @defgroup
+    @defgroup Slider
+    This module implements the structure and functions required to implement a working slider. 
 */
 #ifndef SLIDER_H
 #define SLIDER_H

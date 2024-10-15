@@ -3,7 +3,8 @@
     @date   14 October 2024
     @brief  Player structure definition
 
-    @defgroup
+    @defgroup Player
+    This module is used to define the two players within the game.
 */
 #ifndef PLAYER_H
 #define PLAYER_H
