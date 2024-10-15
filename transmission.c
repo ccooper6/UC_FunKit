@@ -36,9 +36,16 @@ void receive_transmission(ball_t *ball, player_t *player, uint8_t *player_score,
             message[i] = ir_uart_getc();
         }
         if (message[0] == 0x0) {
-            ball->y = message[1];
+            // Flip the y position to mirror it for the other board
+            ball->y = TINYGL_HEIGHT - 1 - message[1];  // Assuming TINYGL_HEIGHT is the max height (e.g., 7)
+
             ball->direction = message[2] & 0x1;
-            ball->angle = (message[2] >> 1) & 0x3;
+
+            // Flip the angle (this depends on your angle convention)
+            ball->angle = (message[2] >> 1) & 0x3;  // Extract original angle
+            ball->angle = (ball->angle == 1) ? -1 : (ball->angle == -1) ? 1 : ball->angle;  // Mirror the angle
+            ball->received_with_angle = (ball->angle == 1 || ball->angle == -1);
+
             *player_score = message[3];
             ball->direction = 1;
             *player = PLAYER1;

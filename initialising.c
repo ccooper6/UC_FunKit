@@ -28,7 +28,7 @@ void init_game(slider_t *slider, ball_t *ball) {
     ball->x = 0;
     ball->y = rand() % 7; // Starts the ball at a random position
     ball->direction = 1;
-    ball->angle = 0;
+    ball->angle = rand() % 3 - 1; // Starts the ball at a random angle
 
     tinygl_font_set(&font3x5_1);
     tinygl_text_speed_set(MESSAGE_RATE);

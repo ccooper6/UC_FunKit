@@ -4,6 +4,9 @@
     @brief  Ball functions for the game
 */
 #include "ball.h"
+
+#include <stdlib.h>
+
 #include "tinygl.h"
 #include "transmission.h"
 
@@ -23,7 +26,7 @@ void change_ball_trajectory(ball_t *ball, slider_t *slider)
     } else if (ball->y == slider->y2) {
         ball->angle = 1;
     } else {
-        ball->angle = 0;
+        ball->angle = rand() % 3 - 1; // Randomise angle
     }
     ball->direction = -1;
 }
