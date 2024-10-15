@@ -9,10 +9,12 @@
 #include "ir_uart.h"
 #include "player.h"
 #include "ball.h"
+#include "initialising.h"
 
 #define BALL_MESSAGE_LENGTH 4
 
-void transmit_ball(ball_t *ball, player_t *player, uint8_t *player_score) {
+void transmit_ball(ball_t *ball, player_t *player, uint8_t *player_score)
+{
     uint8_t message[BALL_MESSAGE_LENGTH];
 
     message[0] = 0x0;
@@ -28,7 +30,8 @@ void transmit_ball(ball_t *ball, player_t *player, uint8_t *player_score) {
     tinygl_draw_point(tinygl_point(ball->x, ball->y), 0);
 }
 
-void receive_transmission(ball_t *ball, player_t *player, uint8_t *player_score, game_state_t *game_state) {
+void receive_transmission(ball_t *ball, player_t *player, uint8_t *player_score, game_state_t *game_state)
+{
     if (ir_uart_read_ready_p()) {
         uint8_t message[BALL_MESSAGE_LENGTH];
 
@@ -44,7 +47,6 @@ void receive_transmission(ball_t *ball, player_t *player, uint8_t *player_score,
             // Flip the angle (this depends on your angle convention)
             ball->angle = (message[2] >> 1) & 0x3;  // Extract original angle
             ball->angle = (ball->angle == 1) ? -1 : (ball->angle == -1) ? 1 : ball->angle;  // Mirror the angle
-            ball->received_with_angle = (ball->angle == 1 || ball->angle == -1);
 
             *player_score = message[3];
             ball->direction = 1;
@@ -57,17 +59,39 @@ void receive_transmission(ball_t *ball, player_t *player, uint8_t *player_score,
     }
 }
 
-void send_start_notification(void) {
+void send_start_notification(void)
+{
     ir_uart_putc('S');
 }
 
-void receive_start_notification(game_state_t *game_state, player_t *player) {
+void receive_start_notification(game_state_t *game_state, player_t *player)
+{
     if (ir_uart_read_ready_p()) {
         char ch = ir_uart_getc();
         if (ch == 'S') {
             *game_state = PLAY;
             *player = PLAYER2;
             tinygl_clear();
+        }
+    }
+}
+
+void send_restart_notification(void)
+{
+    ir_uart_putc('R');
+}
+
+void receive_restart_notification(game_state_t *game_state, uint8_t *player_score, bool *end_text_set, bool *slider_drawn)
+{
+    if (ir_uart_read_ready_p()) {
+        char ch = ir_uart_getc();
+        if (ch == 'R') {
+            tinygl_clear();
+            tinygl_text("CHOOSE PLAYER 1");
+            *game_state = START;
+            *player_score = 0;
+            *end_text_set = false;
+            *slider_drawn = false;
         }
     }
 }

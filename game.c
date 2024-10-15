@@ -58,9 +58,19 @@ int main(void) {
 
                 break;
             case END:
+                receive_restart_notification(&game_state, &player_score, &end_text_set, &slider_drawn);
                 if (!end_text_set) {
                     show_winner(player_score);
                     end_text_set = true;
+                }
+                if (navswitch_push_event_p(NAVSWITCH_PUSH)) {
+                    send_restart_notification();
+                    tinygl_clear();
+                    tinygl_text("CHOOSE PLAYER 1");
+                    game_state = START;
+                    player_score = 0;
+                    end_text_set = false;
+                    slider_drawn = false;
                 }
                 break;
         }

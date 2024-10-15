@@ -37,4 +37,8 @@ void send_start_notification(void);
  */
 void receive_start_notification(game_state_t *game_state, player_t *player);
 
+void send_restart_notification(void);
+
+void receive_restart_notification(game_state_t *game_state, uint8_t *player_score, bool *end_text_set, bool *slider_drawn);
+
 #endif
