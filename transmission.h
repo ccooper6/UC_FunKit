@@ -3,7 +3,11 @@
     @date   14 October 2024
     @brief  Transmission functions for the game
 
-    @defgroup
+    @defgroup Transmit
+    This module implements the transmission functions required for the game. 
+    It provides both sending and receiving functions to help transmit the necessary
+    information between the two fun kits.
+
 */
 #ifndef TRANSMIT_H
 #define TRANSMIT_H
@@ -20,7 +24,7 @@
 void transmit_ball(ball_t *ball, player_t *player, uint8_t *player_score);
 
 /**
- * Recieves the transmission of the ball from the other player
+ * Receives the transmission of the ball from the other player
  * @param ball pointer to the ball to display
  * @param player pointer to the player to update
  * @param player_score pointer to the current score of the player

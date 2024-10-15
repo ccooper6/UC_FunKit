@@ -3,7 +3,8 @@
     @date   14 October 2024
     @brief  Ball functions for the game
 
-    @defgroup ?
+    @defgroup Ball
+    This module implements the structure and functions required to implement a working ball. 
 */
 #ifndef BALL_H
 #define BALL_H
@@ -28,7 +29,7 @@ typedef struct ball {
 bool ball_hits_slider(ball_t *ball, slider_t *slider);
 
 /**
-* Changes the trajectory of the ball when it hits the slider
+* Changes the trajectory of the ball when it hits the slider or the wall
 * @param ball the pointer to the ball to change the angle and direction of
 * @param slider the pointer to the slider use to base the changes off
 */
