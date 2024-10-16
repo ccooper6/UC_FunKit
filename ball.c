@@ -15,27 +15,27 @@ bool ball_hits_slider(ball_t *ball, slider_t *slider)
 void change_ball_trajectory(ball_t *ball, slider_t *slider)
 {
     if (ball->y == 6) { // Handle corner collisions
-        ball->angle = -1;
+        ball->angle = LEFT_ANGLE;
     } else if (ball->y == 0) {
-        ball->angle = 1;
+        ball->angle = RIGHT_ANGLE;
     } else if (ball->y == slider->y1) { // Handle slider collisions
-        ball->angle = -1;
+        ball->angle = LEFT_ANGLE;
     } else if (ball->y == slider->y2) {
-        ball->angle = 1;
+        ball->angle = RIGHT_ANGLE;
     } else {
-        ball->angle = 0;
+        ball->angle = NO_ANGLE;
     }
-    ball->direction = -1;
+    ball->direction = BACKWARD;
 }
 
 bool ball_hits_wall(ball_t *ball)
 {
-    return (ball->y == 0 && ball->angle != 0) || (ball->y == 6 && ball->angle != 0);
+    return (ball->y == 0 && ball->angle != NO_ANGLE) || (ball->y == 6 && ball->angle != NO_ANGLE);
 }
 
 bool ball_misses_slider(ball_t *ball)
 {
-    return ball->x == 0 && ball->direction == -1;
+    return ball->x == 0 && ball->direction == BACKWARD;
 }
 
 void update_ball(ball_t *ball, player_t *player, slider_t *slider, uint16_t *ball_tick, uint8_t *player_score, game_state_t *game_state, bool *slider_drawn)
@@ -60,9 +60,9 @@ void update_ball(ball_t *ball, player_t *player, slider_t *slider, uint16_t *bal
         return;
     } else if (ball_hits_wall(ball)) {
         if (ball->y == 0) {
-            ball->angle = 1; // If left wall, send right
+            ball->angle = RIGHT_ANGLE; // If left wall, send right
         } else if (ball->y == 6) {
-            ball->angle = -1; // If right wall, send left
+            ball->angle = LEFT_ANGLE; // If right wall, send left
         }
     }
 

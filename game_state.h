@@ -16,6 +16,9 @@
 #include <stdbool.h>
 #include "slider.h"
 
+#define BALL_MESSAGE_LENGTH 4
+#define LOSE_CONDITION 3
+
 /* Forward declaration of ball_t */
 typedef struct ball ball_t;
 

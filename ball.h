@@ -13,6 +13,11 @@
 #include "game_state.h"
 #include "player.h"
 #include "slider.h"
+#define LEFT_ANGLE -1
+#define RIGHT_ANGLE 1
+#define NO_ANGLE 0
+#define FORWARD 1
+#define BACKWARD -1
 
 /** Structure defining state of a ball.  */
 typedef struct ball {
