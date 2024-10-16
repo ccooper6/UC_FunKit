@@ -11,7 +11,8 @@
 /* Define the length of the message sent every time ball information is transmitted */
 #define BALL_MESSAGE_LENGTH 4
 
-void check_game_over(game_state_t *game_state, uint8_t *player_score) {
+void check_game_over(game_state_t *game_state, uint8_t *player_score)
+{
     if (*player_score == 3) {
         *game_state = END;
         uint8_t message[BALL_MESSAGE_LENGTH];
@@ -38,11 +39,12 @@ void player_lost_round(uint8_t *player_score, slider_t *slider, ball_t *ball, ga
     }
 }
 
-void show_winner(uint8_t player_score) {
+void show_winner(uint8_t player_score)
+{
     tinygl_clear();
     if (player_score == 3) {
-        tinygl_text("LOSER");
+        tinygl_draw_message("LOSER", tinygl_point(0,6), 1);
     } else {
-        tinygl_text("WINNER");
+        tinygl_draw_message("WINNER", tinygl_point(0,6), 1);
     }
 }

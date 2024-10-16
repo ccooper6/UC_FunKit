@@ -10,17 +10,22 @@
 
 #include <stdlib.h>
 
-void reset_variables(slider_t* slider, ball_t *ball, player_t *player, game_state_t *game_state, uint16_t *ball_tick, uint8_t *player_score, bool *end_text_set, bool *slider_drawn, uint8_t *count)
+void reset_variables(slider_t* slider, ball_t *ball, player_t *player, game_state_t *game_state, uint16_t *ball_tick, uint8_t *player_score, bool *end_text_set, bool *slider_drawn, uint8_t *count, uint32_t *game_over_ticks)
 {
-    &slider =
-    *ball;
-    *player;
+    slider->y1 = 1;
+    slider->y2 = 3;
+    ball->x = 0;
+    ball->y = 0;
+    ball->angle = 0;
+    ball->direction = 0;
+    *player = PLAYER1;
     *game_state = START;
     *ball_tick = 0;
     *player_score = 0;
     *end_text_set = false;
     *slider_drawn = false;
     *count = 0;
+    *game_over_ticks = 0;
 }
 
 int main(void)
@@ -34,19 +39,15 @@ int main(void)
     bool end_text_set;
     bool slider_drawn;
     uint8_t count;
+    uint32_t game_over_ticks;
 
-    reset_variables(&slider, &ball, &player, &game_state, &ball_tick, &player_score, &end_text_set, &slider_drawn, &count);
+    reset_variables(&slider, &ball, &player, &game_state, &ball_tick, &player_score, &end_text_set, &slider_drawn, &count, &game_over_ticks);
 
     init_system();
     init_game(&slider, &ball);
 
     tinygl_text("CHOOSE PLAYER 1");
 
-    uint8_t player_score = 0;
-    bool end_text_set = false;
-    bool slider_drawn = false;
-    uint8_t count = 0;
-    uint32_t game_over_ticks = 0;
 
 
     while (1) {
@@ -83,20 +84,18 @@ int main(void)
                 if (!end_text_set) {
                     show_winner(player_score);
                     end_text_set = true;
-                    game_over_ticks = 0;  // Reset here
+                    game_over_ticks = 0;
                 }
 
-                if (game_over_ticks >= 5500) {
+                if (game_over_ticks >= 4500) {
 
-                    game_state = START;
-                    player_score = 0;
-                    end_text_set = false;
-                    slider_drawn = false;
+                    reset_variables(&slider, &ball, &player, &game_state, &ball_tick, &player_score, &end_text_set, &slider_drawn, &count, &game_over_ticks);
+
+                    init_system();
+                    init_game(&slider, &ball);
+
                     tinygl_clear();
                     tinygl_text("PLAY AGAIN");
-                    game_over_ticks = 0;  // Reset here
-                    ball_tick = 0;
-                    init_game(&slider, &ball);
                 }
                 game_over_ticks++;
                 break;

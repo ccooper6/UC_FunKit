@@ -46,7 +46,7 @@ void update_ball(ball_t *ball, player_t *player, slider_t *slider, uint16_t *bal
     tinygl_draw_point(tinygl_point(ball->x, ball->y), 1);
 
     (*ball_tick)++;
-    if (*ball_tick < 200) {
+    if (*ball_tick < 125) {
         return;
     }
 
