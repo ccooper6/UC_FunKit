@@ -10,16 +10,36 @@
 
 #include <stdlib.h>
 
-int main(void) {
+void reset_variables(slider_t* slider, ball_t *ball, player_t *player, game_state_t *game_state, uint16_t *ball_tick, uint8_t *player_score, bool *end_text_set, bool *slider_drawn, uint8_t *count)
+{
+    &slider =
+    *ball;
+    *player;
+    *game_state = START;
+    *ball_tick = 0;
+    *player_score = 0;
+    *end_text_set = false;
+    *slider_drawn = false;
+    *count = 0;
+}
+
+int main(void)
+{
     slider_t slider;
     ball_t ball;
     player_t player;
-    game_state_t game_state = START;
-    uint16_t ball_tick = 0;
+    game_state_t game_state;
+    uint16_t ball_tick;
+    uint8_t player_score;
+    bool end_text_set;
+    bool slider_drawn;
+    uint8_t count;
+
+    reset_variables(&slider, &ball, &player, &game_state, &ball_tick, &player_score, &end_text_set, &slider_drawn, &count);
 
     init_system();
-
     init_game(&slider, &ball);
+
     tinygl_text("CHOOSE PLAYER 1");
 
     uint8_t player_score = 0;
@@ -27,6 +47,7 @@ int main(void) {
     bool slider_drawn = false;
     uint8_t count = 0;
     uint32_t game_over_ticks = 0;
+
 
     while (1) {
         pacer_wait();
