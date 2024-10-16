@@ -26,6 +26,7 @@ int main(void) {
     bool end_text_set = false;
     bool slider_drawn = false;
     uint8_t count = 0;
+    uint32_t game_over_ticks = 0;
 
     while (1) {
         pacer_wait();
@@ -58,20 +59,25 @@ int main(void) {
 
                 break;
             case END:
-                receive_restart_notification(&game_state, &player_score, &end_text_set, &slider_drawn);
                 if (!end_text_set) {
                     show_winner(player_score);
                     end_text_set = true;
+                    game_over_ticks = 0;  // Reset here
                 }
-                if (navswitch_push_event_p(NAVSWITCH_PUSH)) {
-                    send_restart_notification();
-                    tinygl_clear();
-                    tinygl_text("CHOOSE PLAYER 1");
+
+                if (game_over_ticks >= 5500) {
+
                     game_state = START;
                     player_score = 0;
                     end_text_set = false;
                     slider_drawn = false;
+                    tinygl_clear();
+                    tinygl_text("PLAY AGAIN");
+                    game_over_ticks = 0;  // Reset here
+                    ball_tick = 0;
+                    init_game(&slider, &ball);
                 }
+                game_over_ticks++;
                 break;
         }
     }

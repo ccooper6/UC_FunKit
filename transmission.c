@@ -75,23 +75,3 @@ void receive_start_notification(game_state_t *game_state, player_t *player)
         }
     }
 }
-
-void send_restart_notification(void)
-{
-    ir_uart_putc('R');
-}
-
-void receive_restart_notification(game_state_t *game_state, uint8_t *player_score, bool *end_text_set, bool *slider_drawn)
-{
-    if (ir_uart_read_ready_p()) {
-        char ch = ir_uart_getc();
-        if (ch == 'R') {
-            tinygl_clear();
-            tinygl_text("CHOOSE PLAYER 1");
-            *game_state = START;
-            *player_score = 0;
-            *end_text_set = false;
-            *slider_drawn = false;
-        }
-    }
-}
