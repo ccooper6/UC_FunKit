@@ -13,8 +13,7 @@
 #include "ir_uart.h"
 #include "../fonts/font3x5_1.h"
 
-void init_system(void)
-{
+void init_system(void) {
     system_init();
     tinygl_init(PACER_RATE);
     pacer_init(PACER_RATE);
@@ -22,15 +21,14 @@ void init_system(void)
     ir_uart_init();
 }
 
-void init_game(slider_t *slider, ball_t *ball)
-{
+void init_game(slider_t *slider, ball_t *ball) {
     slider->y1 = 2;
     slider->y2 = 4;
 
     ball->x = 0;
-    ball->y = rand() % 7; // Starts the ball at a random position
-    ball->direction = 1;
-    ball->angle = rand() % 3 - 1; // Starts the ball at a random angle
+    ball->y = rand() % LEDMAT_ROWS_NUM; // Starts the ball at a random position
+    ball->direction = FORWARD;
+    ball->angle = NO_ANGLE;
 
     tinygl_font_set(&font3x5_1);
     tinygl_text_speed_set(MESSAGE_RATE);

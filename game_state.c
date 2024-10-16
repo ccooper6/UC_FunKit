@@ -9,11 +9,9 @@
 #include "initialising.h"
 
 /* Define the length of the message sent every time ball information is transmitted */
-#define BALL_MESSAGE_LENGTH 4
 
-void check_game_over(game_state_t *game_state, uint8_t *player_score)
-{
-    if (*player_score == 3) {
+void check_game_over(game_state_t *game_state, uint8_t *player_score) {
+    if (*player_score == LOSE_CONDITION) {
         *game_state = END;
         uint8_t message[BALL_MESSAGE_LENGTH];
         message[0] = 0x1;
@@ -30,7 +28,7 @@ void check_game_over(game_state_t *game_state, uint8_t *player_score)
 
 void player_lost_round(uint8_t *player_score, slider_t *slider, ball_t *ball, game_state_t *game_state, bool *slider_drawn) {
     (*player_score)++;
-    if (*player_score == 3) {
+    if (*player_score == LOSE_CONDITION) {
         check_game_over(game_state, player_score);
     } else {
         tinygl_clear();
@@ -39,12 +37,11 @@ void player_lost_round(uint8_t *player_score, slider_t *slider, ball_t *ball, ga
     }
 }
 
-void show_winner(uint8_t player_score)
-{
+void show_winner(uint8_t player_score) {
     tinygl_clear();
-    if (player_score == 3) {
-        tinygl_draw_message("LOSER", tinygl_point(0,6), 1);
+    if (player_score == LOSE_CONDITION) {
+        tinygl_text("LOSER");
     } else {
-        tinygl_draw_message("WINNER", tinygl_point(0,6), 1);
+        tinygl_text("WINNER");
     }
 }

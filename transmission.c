@@ -11,7 +11,6 @@
 #include "ball.h"
 #include "initialising.h"
 
-#define BALL_MESSAGE_LENGTH 4
 
 void transmit_ball(ball_t *ball, player_t *player, uint8_t *player_score)
 {
@@ -49,7 +48,7 @@ void receive_transmission(ball_t *ball, player_t *player, uint8_t *player_score,
             ball->angle = (ball->angle == 1) ? -1 : (ball->angle == -1) ? 1 : ball->angle;  // Mirror the angle
 
             *player_score = message[3];
-            ball->direction = 1;
+            ball->direction = FORWARD;
             *player = PLAYER1;
             tinygl_draw_point(tinygl_point(ball->x, ball->y), 1);
         } else {

@@ -69,7 +69,7 @@ int main(void)
                 break;
             case PLAY:
                 srand(count);
-                if (player_score >= 3) {
+                if (player_score >= LOSE_CONDITION) {
                     check_game_over(&game_state, &player_score);
                 }
                 update_slider(&slider, &slider_drawn);
