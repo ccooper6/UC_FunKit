@@ -1,3 +1,10 @@
+/** @file   game.c
+    @author Caleb Cooper (cco139), Joshua Ching (jch438)
+    @date   14 October 2024
+    @brief  Main functions for the pong game
+    Updated 17 October 2024 by Caleb Cooper
+*/
+#include <stdlib.h>
 #include "pacer.h"
 #include "tinygl.h"
 #include "navswitch.h"
@@ -8,24 +15,54 @@
 #include "transmission.h"
 #include "initialising.h"
 
-#include <stdlib.h>
+/* The amount of ticks required before the game restarts */
+#define MIN_FINISHED_TICKS 4500
 
-int main(void) {
+/* The minimum y value initially of the slider */
+#define MIN_SLIDER_Y 1
+
+/* The maximum y value initially of the slider */
+#define MAX_SLIDER_Y 3
+
+void reset_variables(slider_t* slider, ball_t *ball, player_t *player, game_state_t *game_state, uint16_t *ball_tick, uint8_t *player_score, bool *end_text_set, bool *slider_drawn, uint8_t *count, uint32_t *game_over_ticks)
+{
+    slider->y1 = MIN_SLIDER_Y;
+    slider->y2 = MAX_SLIDER_Y;
+    ball->x = 0;
+    ball->y = 0;
+    ball->angle = 0;
+    ball->direction = 0;
+    *player = PLAYER1;
+    *game_state = START;
+    *ball_tick = 0;
+    *player_score = 0;
+    *end_text_set = false;
+    *slider_drawn = false;
+    *count = 0;
+    *game_over_ticks = 0;
+}
+
+int main(void)
+{
     slider_t slider;
     ball_t ball;
     player_t player;
-    game_state_t game_state = START;
-    uint16_t ball_tick = 0;
+    game_state_t game_state;
+    uint16_t ball_tick;
+    uint8_t player_score;
+    bool end_text_set;
+    bool slider_drawn;
+    uint8_t count;
+    uint32_t game_over_ticks;
+
+    reset_variables(&slider, &ball, &player, &game_state, &ball_tick, &player_score, &end_text_set, &slider_drawn, &count, &game_over_ticks);
 
     init_system();
-
     init_game(&slider, &ball);
+
     tinygl_text("CHOOSE PLAYER 1");
 
-    uint8_t player_score = 0;
-    bool end_text_set = false;
-    bool slider_drawn = false;
-    uint8_t count = 0;
+
 
     while (1) {
         pacer_wait();
@@ -61,7 +98,20 @@ int main(void) {
                 if (!end_text_set) {
                     show_winner(player_score);
                     end_text_set = true;
+                    game_over_ticks = 0;
                 }
+
+                if (game_over_ticks >= MIN_FINISHED_TICKS) {
+
+                    reset_variables(&slider, &ball, &player, &game_state, &ball_tick, &player_score, &end_text_set, &slider_drawn, &count, &game_over_ticks);
+
+                    init_system();
+                    init_game(&slider, &ball);
+
+                    tinygl_clear();
+                    tinygl_text("PLAY AGAIN");
+                }
+                game_over_ticks++;
                 break;
         }
     }

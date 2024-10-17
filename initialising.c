@@ -2,9 +2,9 @@
     @author Caleb Cooper (cco139), Joshua Ching (jch438)
     @date   14 October 2024
     @brief  Initialising functions for the game
+    Updated 17 October 2024 by Caleb Cooper
 */
 #include "initialising.h"
-
 #include <stdlib.h>
 #include "system.h"
 #include "tinygl.h"
@@ -13,7 +13,8 @@
 #include "ir_uart.h"
 #include "../fonts/font3x5_1.h"
 
-void init_system(void) {
+void init_system(void)
+{
     system_init();
     tinygl_init(PACER_RATE);
     pacer_init(PACER_RATE);
@@ -21,14 +22,15 @@ void init_system(void) {
     ir_uart_init();
 }
 
-void init_game(slider_t *slider, ball_t *ball) {
+void init_game(slider_t *slider, ball_t *ball)
+{
     slider->y1 = 2;
     slider->y2 = 4;
 
     ball->x = 0;
-    ball->y = rand() % LEDMAT_ROWS_NUM; // Starts the ball at a random position
+    ball->y = rand() % LEDMAT_ROWS_NUM; // Starts the ball at a random position (0-7)
     ball->direction = FORWARD;
-    ball->angle = NO_ANGLE;
+    ball->angle = rand() % 3 - 1; // Starts the ball at a random angle (-1, 0, 1)
 
     tinygl_font_set(&font3x5_1);
     tinygl_text_speed_set(MESSAGE_RATE);

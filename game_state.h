@@ -2,6 +2,7 @@
     @author Caleb Cooper (cco139), Joshua Ching (jch438)
     @date   14 October 2024
     @brief  Functions affecting the state of the game
+    Updated 17 October 2024 by Caleb Cooper
 
     @defgroup Game State
     This module implements the three game states that game has. 
@@ -16,7 +17,10 @@
 #include <stdbool.h>
 #include "slider.h"
 
+/* The length of the message sent to the other player */
 #define BALL_MESSAGE_LENGTH 4
+
+/* The score that the player reaches to lose the game */
 #define LOSE_CONDITION 3
 
 /* Forward declaration of ball_t */

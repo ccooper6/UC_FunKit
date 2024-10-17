@@ -1,6 +1,7 @@
 # File:   Makefile
-# Author: M. P. Hayes, UCECE
-# Date:   12 Sep 2010
+# Author: Caleb Cooper (cco139), Joshua Ching (jch438)
+# Date:   12 October 2024
+# Updated: 16 October 2024
 # Descr:  Makefile for game
 
 # Definitions.

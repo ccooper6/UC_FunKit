@@ -2,6 +2,7 @@
     @author Caleb Cooper (cco139), Joshua Ching (jch438)
     @date   14 October 2024
     @brief  Ball functions for the game
+    Updated 17 October 2024 by Caleb Cooper
 
     @defgroup Ball
     This module implements the structure and functions required to implement a working ball. 
@@ -13,11 +14,37 @@
 #include "game_state.h"
 #include "player.h"
 #include "slider.h"
+
+/* Ball angle that sends ball to the left */
 #define LEFT_ANGLE -1
+
+/* Ball angle that sends ball to the right */
 #define RIGHT_ANGLE 1
+
+/* Ball angle that sends ball straight */
 #define NO_ANGLE 0
+
+/* Ball direction that sends ball forward (Towards the player slider) */
 #define FORWARD 1
+
+/* Ball direction that sends ball backward (Towards the opponent slider) */
 #define BACKWARD -1
+
+/* Defines the Y value of the left wall */
+#define LEFT_WALL 6
+
+/* Defines the Y value of the right wall */
+#define RIGHT_WALL 0
+
+/* Minimum number of ticks between ball movements */
+#define MIN_BALL_TICK 125
+
+/* LED on value */
+#define LED_ON 1
+
+/* LED off value */
+#define LED_OFF 0
+
 
 /** Structure defining state of a ball.  */
 typedef struct ball {
@@ -33,8 +60,7 @@ typedef struct ball {
 */
 bool ball_hits_slider(ball_t *ball, slider_t *slider);
 
-/**
-* Changes the trajectory of the ball when it hits the slider or the wall
+/** Changes the trajectory of the ball when it hits the slider or the wall
 * @param ball the pointer to the ball to change the angle and direction of
 * @param slider the pointer to the slider use to base the changes off
 */
@@ -50,8 +76,7 @@ bool ball_hits_wall(ball_t *ball);
  */
 bool ball_misses_slider(ball_t *ball);
 
-/**
- * Updates the balls position according to direction, angle and collisions
+/** Updates the balls position according to direction, angle and collisions
  * @param ball the ball to update
  * @param player the player to update
  * @param slider the slider to check position of
