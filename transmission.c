@@ -2,6 +2,7 @@
     @author Caleb Cooper (cco139), Joshua Ching (jch438)
     @date   14 October 2024
     @brief  Transmission functions for the game
+    Updated 17 October 2024 by Caleb Cooper
 */
 #include "transmission.h"
 #include <stdint.h>

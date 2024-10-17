@@ -2,6 +2,7 @@
     @author Caleb Cooper (cco139), Joshua Ching (jch438)
     @date   14 October 2024
     @brief  Slider functions for the game
+    Updated 17 October 2024 by Caleb Cooper
 */
 #include "slider.h"
 #include "navswitch.h"
