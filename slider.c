@@ -7,7 +7,8 @@
 #include "navswitch.h"
 #include "tinygl.h"
 
-void update_slider(slider_t *slider, bool *slider_drawn) {
+void update_slider(slider_t *slider, bool *slider_drawn)
+{
     if (!*slider_drawn) {
         tinygl_draw_line(tinygl_point(X_POS, slider->y1), tinygl_point(X_POS, slider->y2), 1);
         *slider_drawn = true;

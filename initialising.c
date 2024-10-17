@@ -13,7 +13,8 @@
 #include "ir_uart.h"
 #include "../fonts/font3x5_1.h"
 
-void init_system(void) {
+void init_system(void)
+{
     system_init();
     tinygl_init(PACER_RATE);
     pacer_init(PACER_RATE);
@@ -21,7 +22,8 @@ void init_system(void) {
     ir_uart_init();
 }
 
-void init_game(slider_t *slider, ball_t *ball) {
+void init_game(slider_t *slider, ball_t *ball)
+{
     slider->y1 = 2;
     slider->y2 = 4;
 
