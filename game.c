@@ -73,7 +73,7 @@ int main(void)
     init_system();
     init_game(&slider, &ball);
 
-    tinygl_text("CLICK TO START");
+    tinygl_text("PRESS TO START");
 
     while (1) {
         pacer_wait();
