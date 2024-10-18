@@ -2,7 +2,7 @@
     @author Caleb Cooper (cco139), Joshua Ching (jch438)
     @date   14 October 2024
     @brief  Ball functions for the game
-    Updated 17 October 2024 by Caleb Cooper
+    Updated 18 October 2024 by Caleb Cooper
 */
 #include "ball.h"
 #include <stdlib.h>
@@ -25,7 +25,7 @@ void change_ball_trajectory(ball_t *ball, slider_t *slider)
     } else if (ball->y == slider->y2) {
         ball->angle = RIGHT_ANGLE;
     } else {
-        ball->angle = NO_ANGLE;
+        ball->angle = rand() % 3 - 1; // Randomise angle (angle can be -1, 0, 1)
     }
     ball->direction = BACKWARD;
 }

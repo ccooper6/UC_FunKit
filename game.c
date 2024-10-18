@@ -2,7 +2,7 @@
     @author Caleb Cooper (cco139), Joshua Ching (jch438)
     @date   14 October 2024
     @brief  Main functions for the pong game
-    Updated 17 October 2024 by Caleb Cooper
+    Updated 18 October 2024 by Caleb Cooper
 */
 #include <stdlib.h>
 #include "pacer.h"
@@ -24,6 +24,19 @@
 /* The maximum y value initially of the slider */
 #define MAX_SLIDER_Y 3
 
+/**
+ * Resets all variables to default values
+ * @param slider pointer to the slider to reset
+ * @param ball pointer to the ball to reset
+ * @param player pointer to the player to reset
+ * @param game_state pointer to the game state to reset
+ * @param ball_tick pointer to the ball tick to reset
+ * @param player_score pointer to the player score to reset
+ * @param end_text_set pointer to the end text set to reset
+ * @param slider_drawn pointer to the slider_drawn boolean value to reset
+ * @param count pointer to the count to reset
+ * @param game_over_ticks pointer to the ticks to reset
+ */
 void reset_variables(slider_t* slider, ball_t *ball, player_t *player, game_state_t *game_state, uint16_t *ball_tick, uint8_t *player_score, bool *end_text_set, bool *slider_drawn, uint8_t *count, uint32_t *game_over_ticks)
 {
     slider->y1 = MIN_SLIDER_Y;
@@ -60,9 +73,7 @@ int main(void)
     init_system();
     init_game(&slider, &ball);
 
-    tinygl_text("CHOOSE PLAYER 1");
-
-
+    tinygl_text("CLICK TO START");
 
     while (1) {
         pacer_wait();

@@ -22,7 +22,7 @@ make program
 ```
 Do this twice. This will generate all the necessary .o files and then generate a .hex file that will be flashed onto the fun kits.
 
-After booting, you should see a text screen saying "Choose Player 1" on both screens. Press down on the navswitch on one of the fun kits to start. 
+After booting, you should see a text screen saying "Press to start" on both screens. Press down on the navswitch on one of the fun kits to start. 
 Once the game has started, each player has a slider that they can move side to side using the navswitch.
 
 ### Game Rules

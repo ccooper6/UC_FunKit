@@ -2,14 +2,15 @@
     @author Caleb Cooper (cco139), Joshua Ching (jch438)
     @date   14 October 2024
     @brief  Functions affecting the state of the game
-    Updated 17 October 2024 by Caleb Cooper
+    Updated 18 October 2024 by Caleb Cooper
 */
 #include "game_state.h"
 #include "tinygl.h"
 #include "initialising.h"
 #include "transmission.h"
 
-void check_game_over(game_state_t *game_state, uint8_t *player_score) {
+void check_game_over(game_state_t *game_state, uint8_t *player_score)
+{
     if (*player_score == LOSE_CONDITION) {
         *game_state = END;
         transmit_game_over();
@@ -17,7 +18,8 @@ void check_game_over(game_state_t *game_state, uint8_t *player_score) {
 }
 
 
-void player_lost_round(uint8_t *player_score, slider_t *slider, ball_t *ball, game_state_t *game_state, bool *slider_drawn) {
+void player_lost_round(uint8_t *player_score, slider_t *slider, ball_t *ball, game_state_t *game_state, bool *slider_drawn)
+{
     (*player_score)++;
     if (*player_score == LOSE_CONDITION) {
         check_game_over(game_state, player_score);
@@ -28,7 +30,8 @@ void player_lost_round(uint8_t *player_score, slider_t *slider, ball_t *ball, ga
     }
 }
 
-void show_winner(uint8_t player_score) {
+void show_winner(uint8_t player_score)
+{
     tinygl_clear();
     if (player_score == LOSE_CONDITION) {
         tinygl_draw_message("LOSER", tinygl_point(0,6), 1);
